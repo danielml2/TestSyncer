@@ -1,6 +1,5 @@
 package me.danielml.schooltests.google;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -11,7 +10,6 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import me.danielml.schooltests.objects.Grade;
-import me.danielml.schooltests.objects.Subject;
 import me.danielml.schooltests.objects.Test;
 
 import java.io.File;
@@ -21,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class CalendarManager extends GoogleManager {
 
@@ -85,7 +82,8 @@ public class CalendarManager extends GoogleManager {
         }
     }
 
-    public void clear(String calendarID) throws IOException {
+   @SuppressWarnings("unused") // This is a debug method.
+   public void clear(String calendarID) throws IOException {
         Events events = service.events().list(calendarID).execute();
         events.getItems().forEach(event -> {
             try {

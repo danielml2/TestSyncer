@@ -1,13 +1,11 @@
 package me.danielml.schooltests.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.calendar.model.Events;
 import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Test;
-import org.apache.poi.ss.formula.functions.Even;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -37,18 +35,18 @@ public class JSONManager {
         }
     }
 
+    @SuppressWarnings("unused") // This is a debug method.
     public void loadTestsToJSON(List<Test> tests, Events calendarEvents, Grade grade) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode calendarNode = mapper.createObjectNode();
 
-        tests.forEach(test -> {
-            calendarEvents.getItems()
-                    .forEach(event -> {
-                        if (eventDateFormat.format(test.getDueDate()).equals(event.getStart().getDate().toString()))
-                            calendarNode.put(eventDateFormat.format(test.getDueDate()), event.getId());
-                    });
-        });
+        tests.forEach(test ->
+                calendarEvents.getItems()
+                .forEach(event -> {
+                    if (eventDateFormat.format(test.getDueDate()).equals(event.getStart().getDate().toString()))
+                        calendarNode.put(eventDateFormat.format(test.getDueDate()), event.getId());
+                }));
 
         mapper.writeValue(new File("data/calendarID_" + grade.getGradeNum() + ".json"), calendarNode);
     }
