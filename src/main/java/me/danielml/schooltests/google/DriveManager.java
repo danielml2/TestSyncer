@@ -29,7 +29,7 @@ public class DriveManager extends GoogleManager {
         try {
             service.files().get(fileId).executeMediaAndDownloadTo(stream);
         }catch (TokenResponseException exception) {
-            resetCredientals();
+            resetCredentials();
             downloadFile(fileId);
         }
         return file;

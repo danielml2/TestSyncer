@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.danielml.schooltests.json.JSONManager;
 import me.danielml.schooltests.objects.Grade;
-import me.danielml.schooltests.objects.Subject;
 import me.danielml.schooltests.objects.Test;
-import org.apache.poi.ss.formula.functions.T;
-import org.json.simple.parser.ParseException;
 
 import me.danielml.schooltests.google.*;
 import java.awt.*;
