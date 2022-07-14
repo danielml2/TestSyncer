@@ -28,8 +28,10 @@ public class DriveManager extends GoogleManager {
         OutputStream stream = new FileOutputStream(file);
         try {
             service.files().get(fileId).executeMediaAndDownloadTo(stream);
-        }catch (TokenResponseException exception) {
-            resetCredentials();
+        }catch (TokenResponseException  exception) {
+            try {
+                authorize();
+            } catch (GeneralSecurityException ignored) {}
             downloadFile(fileId);
         }
         return file;

@@ -65,6 +65,7 @@ public abstract class GoogleManager {
     private String getRefreshToken() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(new File("tokens/refresh.json"));
+
         return node.get("refresh_token").asText();
     }
 
@@ -81,7 +82,7 @@ public abstract class GoogleManager {
         return tokenResponse.getAccessToken();
     }
 
-    protected final void resetCredentials() {
+    private void resetCredentials() {
         try {
             if(credential != null)
                 return;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,6 +43,10 @@ public class Test {
     }
 
     public Date asDate() { return new Date(dueDate); }
+
+    public String getDateFormatted() {
+        return new SimpleDateFormat("yyyy-MM-dd").format(asDate());
+    }
 
     @JsonProperty("type")
     public TestType getType() {

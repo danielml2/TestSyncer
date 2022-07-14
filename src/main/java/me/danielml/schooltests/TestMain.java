@@ -57,12 +57,9 @@ public class TestMain {
 
            json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
 
-          calendarManager.updateTestEvents(fromExcel, grade.getCalendarId());
-          calendarManager.removeDates(fromExcel, grade.getCalendarId());
+          calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
          System.out.println("Finished Grade #" + grade.getGradeNum());
        }
-
-
 
         allAdditions.forEach(test -> System.out.println("(Grade " + test.getGradeNum() +") Added: " + test.getSubject() + ": " + test.asDate()));
 
