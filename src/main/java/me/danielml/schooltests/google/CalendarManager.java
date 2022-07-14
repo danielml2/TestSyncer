@@ -50,10 +50,10 @@ public class CalendarManager extends GoogleManager {
     
     public void updateTestEvents(List<Test> additions, List<Test> removals, Grade grade) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode jsonNode = (ObjectNode) mapper.readTree(new File("calendarID_" + grade.getGradeNum()));
+        ObjectNode jsonNode = (ObjectNode) mapper.readTree(new File("data/calendarID_" + grade.getGradeNum() + ".json"));
         removeDates(removals, jsonNode, grade.getCalendarId());
         addEvents(additions, jsonNode, grade.getCalendarId());
-        mapper.writeValue(new File("data/calendarID_" + additions.get(0).getGradeNum() + ".json"), jsonNode);
+        mapper.writeValue(new File("data/calendarID_" + grade.getGradeNum() + ".json"), jsonNode);
     }
 
     private void removeDates(List<Test> removals, ObjectNode jsonNode, String calendarId) throws IOException {

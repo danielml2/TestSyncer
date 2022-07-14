@@ -43,7 +43,7 @@ public class TestMain {
         List<Test> allAdditions = new ArrayList<>();
         List<Test> allRemovals = new ArrayList<>();
 
-        Grade[] grades = new ObjectMapper().readValue(new File("data/grades.json"), new TypeReference<Grade[]>(){});
+        Grade[] grades = new ObjectMapper().readValue(new File("data/grades.json"), new TypeReference<>() {});
 
        for(Grade grade : grades) {
            System.out.println("Starting grade #" + grade.getGradeNum());

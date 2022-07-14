@@ -1,6 +1,7 @@
 package me.danielml.schooltests.objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -42,8 +43,10 @@ public class Test {
         return dueDate;
     }
 
+    @JsonIgnore
     public Date asDate() { return new Date(dueDate); }
 
+    @JsonIgnore
     public String getDateFormatted() {
         return new SimpleDateFormat("yyyy-MM-dd").format(asDate());
     }
