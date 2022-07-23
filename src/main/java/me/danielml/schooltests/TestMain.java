@@ -7,10 +7,9 @@ import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Test;
 
 import me.danielml.schooltests.google.*;
+
 import java.awt.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -54,21 +53,9 @@ public class TestMain {
         allAdditions.forEach(dbManager::addTest);
         allRemovals.forEach(dbManager::removeTest);
         dbManager.setValue("/last_update",new Date().getTime());
-        displaySystemMessage("Finished updating", allRemovals.size() + " tests were removed and " + allAdditions.size() + " were added.");
     }
 
-    public static void displaySystemMessage(String caption, String message) {
-        try {
-            SystemTray tray = SystemTray.getSystemTray();
-            java.awt.Image image = Toolkit.getDefaultToolkit().getImage("images//trayicon.png");
-            TrayIcon trayIcon = new TrayIcon(image, "gaming");
-            tray.add(trayIcon);
-            trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO);
-            tray.remove(trayIcon);
-        }catch (AWTException exception) {
-            exception.printStackTrace();
-        }
-    }
+
 
 
 }
