@@ -2,4 +2,4 @@ target
 src/main/resources
 tokens
 data
-table.xlsx
+*.xlsx

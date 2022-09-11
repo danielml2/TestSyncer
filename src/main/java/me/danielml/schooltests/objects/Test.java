@@ -74,6 +74,10 @@ public class Test {
         return subject == test.subject && dueDate == test.dueDate && type == test.type;
     }
 
+    @Override
+    public String toString() {
+        return "(Grade " + gradeNum + "): " + subject + " " + type + " at " + getDateFormatted() + " for " + classNums;
+    }
 
     public enum TestType {
         BAGROT("בגרות"),MATCONET("מתכונת"),TEST("מבחן"),QUIZ("בוחן"),SECOND_DATE("מועד ב"),NONE("");

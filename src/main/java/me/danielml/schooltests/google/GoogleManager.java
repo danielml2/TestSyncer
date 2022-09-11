@@ -40,6 +40,7 @@ public abstract class GoogleManager {
         if(!refreshTokenFile.exists())
             resetCredentials();
 
+
         String refreshToken = getRefreshToken();
 
         credential = new GoogleCredential.Builder()
@@ -77,7 +78,7 @@ public abstract class GoogleManager {
         scopes.add(CalendarScopes.CALENDAR_EVENTS);
 
         TokenResponse tokenResponse = new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(),
-                refreshToken, clientId, clientSecret).setScopes(scopes).setGrantType("refresh_token").execute();
+                    refreshToken, clientId, clientSecret).setScopes(scopes).setGrantType("refresh_token").execute();
 
         return tokenResponse.getAccessToken();
     }

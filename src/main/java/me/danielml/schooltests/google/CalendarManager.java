@@ -87,7 +87,7 @@ public class CalendarManager extends GoogleManager {
         Events events = service.events().list(calendarID).execute();
         events.getItems().forEach(event -> {
             try {
-                service.events().delete(calendarID,event.getId()).execute();
+                    service.events().delete(calendarID,event.getId()).execute();
                 Thread.sleep(250);
             } catch (IOException | InterruptedException exception) {
                 exception.printStackTrace();

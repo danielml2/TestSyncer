@@ -12,16 +12,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class TestManager {
 
-    private final String[] filterWords = {"חשיפה","עבודה","פעילות","טקס","הקאתון", "סיור", "יום","תגבור"};
+    private final String[] filterWords = {"חשיפה","עבודה","הפקות","פעילות","טקס","הקאתון", "סיור", "יום","תגבור"};
 
-    public List<Test> getTests(File excelFile, Grade grade, boolean includePast) throws IOException {
+    public List<Test> getTests(File excelFile, Grade grade) throws IOException {
         List<Test> tests = new ArrayList<>();
 
         FileInputStream stream = new FileInputStream(excelFile);
@@ -130,8 +129,6 @@ public class TestManager {
 
         return tests;
     }
-
-
 
     public List<Test> getAdditions(List<Test> oldest, List<Test> newest) {
         return newest.stream()
