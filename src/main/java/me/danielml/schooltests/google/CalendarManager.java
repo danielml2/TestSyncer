@@ -50,21 +50,19 @@ public class CalendarManager extends GoogleManager {
     }
     
     public void updateTestEvents(List<Test> additions, List<Test> removals, Grade grade) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode jsonNode = (ObjectNode) mapper.readTree(new File("data/calendarID_" + grade.getGradeNum() + ".json"));
-        removeDates(removals, jsonNode, grade.getCalendarId());
-        addEvents(additions, jsonNode, grade.getCalendarId());
-        mapper.writeValue(new File("data/calendarID_" + grade.getGradeNum() + ".json"), jsonNode);
+        removeDates(removals, grade.getCalendarId());
+        addEvents(additions, grade.getCalendarId());
     }
 
-    private void removeDates(List<Test> removals, ObjectNode jsonNode, String calendarId) throws IOException {
+    private void removeDates(List<Test> removals, String calendarId) throws IOException {
+        String testName;
         for(Test test : removals) {
-            service.events().delete(calendarId, jsonNode.get(test.getDateFormatted()).asText()).execute();
-            jsonNode.remove(test.getDateFormatted());
+            testName = test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum();
+            service.events().delete(calendarId, testName).execute();
         }
     }
     
-    private void addEvents(List<Test> additions, ObjectNode jsonNode, String calendarId) throws IOException {
+    private void addEvents(List<Test> additions, String calendarId) throws IOException {
         for (Test test : additions) {
             Date date = test.asDate();
             Date endDate = new Date(date.getTime() + 86400000L);
@@ -73,10 +71,10 @@ public class CalendarManager extends GoogleManager {
                     .setStart(new EventDateTime().setDate(new DateTime(eventDateFormat.format(date))))
                     .setEnd(new EventDateTime().setDate(new DateTime(eventDateFormat.format(endDate))))
                     .setDescription("כיתות: "+ Arrays.toString(test.getClassNums().toArray()).replace("[","").replace("]","").replace("-1","שכבתי"))
-                    .setSummary(test.getType().getName() + " " + test.getSubject().getDefaultName());
+                    .setSummary(test.getType().getName() + " " + test.getSubject().getDefaultName())
+                    .setId(test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
 
-            var addedEvent = service.events().insert(calendarId,event).execute();
-            jsonNode.put(test.getDateFormatted(), addedEvent.getId());
+            service.events().insert(calendarId,event).execute();
 
             System.out.println("Inserted event " + test.getDateFormatted());
             delayForAPI();
@@ -89,11 +87,15 @@ public class CalendarManager extends GoogleManager {
         events.getItems().forEach(event -> {
             try {
                     service.events().delete(calendarID,event.getId()).execute();
-                Thread.sleep(250);
-            } catch (IOException | InterruptedException exception) {
+                    delayForAPI();
+            } catch (IOException exception) {
                 exception.printStackTrace();
             }
         });
+    }
+    @SuppressWarnings("unused") // This is also a debug method.
+    public List<Event> listEvents(String calendarID) throws IOException {
+        return service.events().list(calendarID).execute().getItems();
     }
 
     public void delayForAPI() {

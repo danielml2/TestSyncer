@@ -33,6 +33,15 @@ public enum Subject {
         return this.name();
     }
 
+    public String getCalendarIDName() {
+        StringBuilder newName = new StringBuilder();
+        for(char ch : this.name().toLowerCase().toCharArray()) {
+            if(ch < 'v')
+                newName.append(ch);
+        }
+        return newName.toString();
+    }
+
     public String getDefaultName() {
         return this.names[0];
     }
