@@ -2,6 +2,7 @@ package me.danielml.schooltests.google;
 
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 
@@ -49,7 +50,7 @@ public class DriveManager extends GoogleManager {
         }
 
         try {
-            service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(),credential).build();
+            service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(),credential).build();
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }

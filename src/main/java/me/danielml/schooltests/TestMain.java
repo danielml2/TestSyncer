@@ -3,14 +3,13 @@ package me.danielml.schooltests;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.danielml.schooltests.json.JSONManager;
-import me.danielml.schooltests.objects.Grade;
-import me.danielml.schooltests.objects.Test;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 import me.danielml.schooltests.google.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.List;
+import me.danielml.schooltests.objects.Grade;
+import me.danielml.schooltests.objects.Test;
 
 public class TestMain {
 
@@ -42,7 +41,6 @@ public class TestMain {
 
             if(usingJSONFiles)
                 json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
-
 
             gradeAdditions.forEach(dbManager::addTest);
             gradeRemovals.forEach(dbManager::removeTest);
