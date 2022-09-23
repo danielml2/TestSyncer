@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.*;
 import me.danielml.schooltests.objects.Change;
-import me.danielml.schooltests.objects.ChangeType;
 import me.danielml.schooltests.objects.Subject;
 import me.danielml.schooltests.objects.Test;
 import me.danielml.schooltests.objects.Test.TestType;
@@ -19,11 +18,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static me.danielml.schooltests.TestMain.YEAR_ID;
+
 public class FirebaseManager extends GoogleManager{
 
     private FirebaseApp app;
     private FirebaseDatabase db;
-    private final String yearText = "2022-2023";
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
     public FirebaseManager() {
@@ -44,23 +44,8 @@ public class FirebaseManager extends GoogleManager{
         }
         db = FirebaseDatabase.getInstance(app);
     }
-
-    public void addTest(Test test) {
-        setValue("years/" + yearText + "/tests/grade" + test.getGradeNum() + "/" + formatTestDBName(test), test);
-        Change change = new Change(test, ChangeType.ADD, new Date());
-        setValue("years/" + yearText + "/changes/grade" + test.getGradeNum() + "/" + formatChangeDBName(change), change);
-    }
-
-    public void removeTest(Test test) {
-        setValue("years/" + yearText + "/tests/grade" + test.getGradeNum() + "/" + formatTestDBName(test),null);
-        Change change = new Change(test, ChangeType.REMOVE, new Date());
-        setValue("years/" + yearText + "/changes/grade" + test.getGradeNum() + "/" + formatChangeDBName(change), change);
-    }
-
     public List<Test> loadTestsFromFirebase(int gradeNum) {
-       DataSnapshot testsDB = get("years/" + yearText + "/tests/grade" + gradeNum);
-        System.out.println(testsDB);
-        System.out.println(testsDB.getChildren());
+        DataSnapshot testsDB = get("years/" + YEAR_ID + "/tests/grade" + gradeNum);
 
         return StreamSupport.stream(testsDB.getChildren().spliterator(), false)
                 .map(testSnapshot -> {
@@ -114,12 +99,11 @@ public class FirebaseManager extends GoogleManager{
         }
         return snapshot[0];
     }
-
-    private String formatTestDBName(Test test) {
+    public String formatTestDBName(Test test) {
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate());
     }
 
-    private String formatChangeDBName(Change change) {
+    public String formatChangeDBName(Change change) {
         return "change_" + change.getTest().getSubject().name().toLowerCase() + "_" + change.getType().name().toLowerCase() + "_" + dateFormat.format(new Date(change.getChangeDate()));
     }
 }

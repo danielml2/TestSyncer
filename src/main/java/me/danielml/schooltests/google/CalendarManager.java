@@ -12,6 +12,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Test;
+import org.apache.poi.ss.formula.functions.Even;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,21 +65,27 @@ public class CalendarManager extends GoogleManager {
     
     private void addEvents(List<Test> additions, String calendarId) throws IOException {
         for (Test test : additions) {
-            Date date = test.asDate();
-            Date endDate = new Date(date.getTime() + 86400000L);
 
-            Event event = new Event()
-                    .setStart(new EventDateTime().setDate(new DateTime(eventDateFormat.format(date))))
-                    .setEnd(new EventDateTime().setDate(new DateTime(eventDateFormat.format(endDate))))
-                    .setDescription("כיתות: "+ Arrays.toString(test.getClassNums().toArray()).replace("[","").replace("]","").replace("-1","שכבתי"))
-                    .setSummary(test.getType().getName() + " " + test.getSubject().getDefaultName())
-                    .setId(test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
+            Event event = createEventFor(test);
 
-            service.events().insert(calendarId,event).execute();
+            System.out.println("Event ID: " +test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
+            service.events().insert(calendarId, event);
 
-            System.out.println("Inserted event " + test.getDateFormatted());
+            System.out.println("Inserted event at " + test.getDateFormatted());
             delayForAPI();
         }
+    }
+
+    public Event createEventFor(Test test) {
+        Date date = test.asDate();
+        Date endDate = new Date(date.getTime() + 86400000L);
+
+        return new Event()
+                .setStart(new EventDateTime().setDate(new DateTime(eventDateFormat.format(date))))
+                .setEnd(new EventDateTime().setDate(new DateTime(eventDateFormat.format(endDate))))
+                .setDescription("כיתות: "+ Arrays.toString(test.getClassNums().toArray()).replace("[","").replace("]","").replace("-1","שכבתי"))
+                .setSummary(test.getType().getName() + " " + test.getSubject().getDefaultName())
+                .setId(test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
     }
 
    @SuppressWarnings("unused") // This is a debug method.
@@ -103,6 +110,18 @@ public class CalendarManager extends GoogleManager {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+    @SuppressWarnings("unused") // Debug method
+    public void addMissingEvents(String calendarID, List<Test> tests) throws IOException {
+        List<Event> events = listEvents(calendarID);
+
+        for(Test test: tests) {
+            if(events.stream().noneMatch(event ->  event.getId().equals(test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum())))
+            {
+                service.events().insert(calendarID, createEventFor(test)).execute();
+                delayForAPI();
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ public enum Subject {
     public String getCalendarIDName() {
         StringBuilder newName = new StringBuilder();
         for(char ch : this.name().toLowerCase().toCharArray()) {
-            if(ch < 'v')
+            if(ch < 'v' && ch != '_')
                 newName.append(ch);
         }
         return newName.toString();
