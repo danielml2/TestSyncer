@@ -64,7 +64,9 @@ public class TestManager {
                                 System.out.println("(Grade " + grade.getGradeNum() + ") [Row: " + cell.getRowIndex() + ", COL: " + cell.getColumnIndex() + " MERGED] Detected new test: "
                                         + subject.name() + " on " + dueDate + " for " + classNum);
                                 System.out.println("From: " + value);
-                                return new Test(subject,dueDate.getTime(), type,grade.getGradeNum(), new Integer[]{classNum});
+                                Test test = new Test(subject,dueDate.getTime(), type,grade.getGradeNum(), new Integer[]{classNum});
+                                test.setCreationText(cell.getRichStringCellValue().getString());
+                                return test;
                             })
                             .collect(Collectors.toList());
                     tests.addAll(mergedTests);
@@ -107,6 +109,7 @@ public class TestManager {
                        if(!sameSubject.isPresent())
                        {
                            Test newTest = new Test(subject,dueDate.getTime(), type,grade.getGradeNum(), new Integer[]{classNum});
+                           newTest.setCreationText(cell.getStringCellValue());
                            tests.add(newTest);
                            rowTests.add(newTest);
                            System.out.println("(Grade " + grade.getGradeNum() + ") [Row: " + row.getRowNum() + ", COL: " + cell.getColumnIndex() + "] Detected new test: "

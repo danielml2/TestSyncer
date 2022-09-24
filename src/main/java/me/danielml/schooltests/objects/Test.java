@@ -19,15 +19,18 @@ public class Test {
     private final long dueDate;
     private final TestType type;
 
+    @JsonIgnore
+    private String creationText;
+
     @JsonCreator
     public Test(@JsonProperty("subject") Subject subject, @JsonProperty("date") long dueDate, @JsonProperty("type") TestType type, @JsonProperty("gradeNum") int gradeNum, @JsonProperty("classNum") Integer[] classNums) {
         this.subject = subject;
         this.dueDate = dueDate;
         this.type = type;
         this.gradeNum = gradeNum;
+        this.creationText = "NONE";
         this.classNums = new ArrayList<>(Arrays.asList(classNums));
     }
-
 
     public void addClassNum(int classNum) {
         this.classNums.add(classNum);
@@ -64,6 +67,14 @@ public class Test {
     @JsonProperty("gradeNum")
     public int getGradeNum() {
         return gradeNum;
+    }
+
+    public void setCreationText(String creationText) {
+        this.creationText = creationText;
+    }
+
+    public String getCreationText() {
+        return creationText;
     }
 
     @Override
