@@ -18,6 +18,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static me.danielml.schooltests.TestMain.DEBUG;
 import static me.danielml.schooltests.TestMain.YEAR_ID;
 
 public class FirebaseManager extends GoogleManager{
@@ -33,9 +34,12 @@ public class FirebaseManager extends GoogleManager{
     @Override
     public void initializeService() {
         try {
+            String credentialsFile = DEBUG ? "/debug_firebase.json" : "/firebase.json";
+            String dbURL = DEBUG ? "https://schooltests-debug-default-rtdb.europe-west1.firebasedatabase.app/" : "https://schooltests-419f5-default-rtdb.europe-west1.firebasedatabase.app";
+
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(FirebaseManager.class.getResourceAsStream("/firebase.json")))
-                    .setDatabaseUrl("https://schooltests-419f5-default-rtdb.europe-west1.firebasedatabase.app")
+                    .setCredentials(GoogleCredentials.fromStream(getClass().getResourceAsStream(credentialsFile)))
+                    .setDatabaseUrl(dbURL)
                     .build();
 
             app = FirebaseApp.initializeApp(options);

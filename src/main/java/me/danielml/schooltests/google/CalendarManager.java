@@ -1,10 +1,8 @@
 package me.danielml.schooltests.google;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -12,7 +10,6 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Test;
-import org.apache.poi.ss.formula.functions.Even;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import static me.danielml.schooltests.TestMain.DEBUG;
 
 public class CalendarManager extends GoogleManager {
 
@@ -51,8 +49,9 @@ public class CalendarManager extends GoogleManager {
     }
     
     public void updateTestEvents(List<Test> additions, List<Test> removals, Grade grade) throws IOException {
-        removeDates(removals, grade.getCalendarId());
-        addEvents(additions, grade.getCalendarId());
+        String calendarId = DEBUG ? getDebugCalendarID() : grade.getCalendarId();
+        removeDates(removals, calendarId);
+        addEvents(additions, calendarId);
     }
 
     private void removeDates(List<Test> removals, String calendarId) throws IOException {
@@ -69,7 +68,7 @@ public class CalendarManager extends GoogleManager {
             Event event = createEventFor(test);
 
             System.out.println("Event ID: " +test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
-            service.events().insert(calendarId, event);
+            service.events().insert(calendarId, event).execute();
 
             System.out.println("Inserted event at " + test.getDateFormatted());
             delayForAPI();
@@ -123,5 +122,9 @@ public class CalendarManager extends GoogleManager {
                 delayForAPI();
             }
         }
+    }
+
+    public String getDebugCalendarID() throws IOException {
+        return new ObjectMapper().readValue(new File("data/debugCalendarID.json"), String.class);
     }
 }
