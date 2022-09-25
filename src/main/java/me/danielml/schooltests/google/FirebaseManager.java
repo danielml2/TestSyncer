@@ -27,10 +27,6 @@ public class FirebaseManager extends GoogleManager{
     private FirebaseDatabase db;
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
-    public FirebaseManager() {
-        initializeService();
-    }
-
     @Override
     public void initializeService() {
         try {

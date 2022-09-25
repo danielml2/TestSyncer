@@ -16,9 +16,6 @@ public class DriveManager extends GoogleManager {
 
     private Drive service;
 
-    public DriveManager() {
-        initializeService();
-    }
 
     public File downloadFile(String fileId) throws IOException {
 

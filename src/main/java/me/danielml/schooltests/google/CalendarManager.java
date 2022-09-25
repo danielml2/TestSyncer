@@ -1,6 +1,7 @@
 package me.danielml.schooltests.google;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
@@ -8,6 +9,9 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import me.danielml.schooltests.google.batch.BatchHttpRequestInitializer;
+import me.danielml.schooltests.google.batch.DefaultBatchEventCallback;
+import me.danielml.schooltests.google.batch.DefaultBatchVoidCallback;
 import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Test;
 
@@ -25,9 +29,7 @@ public class CalendarManager extends GoogleManager {
     private Calendar service;
     private final SimpleDateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public CalendarManager() {
-        initializeService();
-    }
+    public CalendarManager() { }
 
 
     @Override
@@ -43,35 +45,43 @@ public class CalendarManager extends GoogleManager {
 
         try {
             service = new Calendar.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(),credential).build();
+
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
     }
     
     public void updateTestEvents(List<Test> additions, List<Test> removals, Grade grade) throws IOException {
+        BatchRequest batchRequest = service.batch(new BatchHttpRequestInitializer());
         String calendarId = DEBUG ? getDebugCalendarID() : grade.getCalendarId();
-        removeDates(removals, calendarId);
-        addEvents(additions, calendarId);
+        removeDates(removals, calendarId, batchRequest);
+        addEvents(additions, calendarId, batchRequest);
+
+        if(batchRequest.size() > 0) {
+            long time = System.currentTimeMillis();
+            System.out.println("Executing batch request...");
+            batchRequest.execute();
+            System.out.println("Finished batch request in " + (System.currentTimeMillis() - time) + "ms");
+        }
     }
 
-    private void removeDates(List<Test> removals, String calendarId) throws IOException {
+    private void removeDates(List<Test> removals, String calendarId, BatchRequest batchRequest) throws IOException {
         String testName;
         for(Test test : removals) {
             testName = test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum();
-            service.events().delete(calendarId, testName).execute();
+            service.events().delete(calendarId, testName).queue(batchRequest, new DefaultBatchVoidCallback());
         }
     }
     
-    private void addEvents(List<Test> additions, String calendarId) throws IOException {
+    private void addEvents(List<Test> additions, String calendarId, BatchRequest batchRequest) throws IOException {
         for (Test test : additions) {
 
             Event event = createEventFor(test);
 
             System.out.println("Event ID: " +test.getSubject().getCalendarIDName() + "date" + test.getDueDate() + "grade" + test.getGradeNum());
-            service.events().insert(calendarId, event).execute();
+            service.events().insert(calendarId, event).queue(batchRequest, new DefaultBatchEventCallback());
 
-            System.out.println("Inserted event at " + test.getDateFormatted());
-            delayForAPI();
+            System.out.println("Queued event at " + test.getDateFormatted());
         }
     }
 

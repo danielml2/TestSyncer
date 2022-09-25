@@ -2,11 +2,8 @@ package me.danielml.schooltests;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.services.calendar.model.Event;
-import com.google.protobuf.JavaType;
 import me.danielml.schooltests.json.JSONManager;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
