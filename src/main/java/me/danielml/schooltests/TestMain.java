@@ -4,12 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.danielml.schooltests.json.JSONManager;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import me.danielml.schooltests.google.*;
+import me.danielml.schooltests.mongodb.MongoManager;
 import me.danielml.schooltests.objects.*;
 
 public class TestMain {
@@ -27,46 +25,32 @@ public class TestMain {
 
         File file = manager.downloadFile(FILE_ID);
 
-        FirebaseManager dbManager = new FirebaseManager();
         JSONManager json = new JSONManager();
-
         Grade[] grades = new ObjectMapper().readValue(new File("data/grades.json"), new TypeReference<>() {});
+        List<Test> allAdditions = new ArrayList<>();
+        List<Test> allRemovals = new ArrayList<>();
+
         for(Grade grade : grades) {
             System.out.println("Starting grade #" + grade.getGradeNum());
-            List<Test> loadedTests = DEBUG ? json.fromJSON("tests_" + grade.getGradeNum()) : dbManager.loadTestsFromFirebase(grade.getGradeNum());
+            List<Test> loadedTests = json.fromJSON("tests_" + grade.getGradeNum());
 
             List<Test> fromExcel = testManager.getTests(file, grade);
 
             List<Test> gradeAdditions = testManager.getAdditions(loadedTests, fromExcel);
             List<Test> gradeRemovals = testManager.getRemovals(loadedTests, fromExcel);
 
-            if(DEBUG)
+            if (DEBUG)
                 json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
 
             calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
 
-            HashMap<String, Object> testChanges = new HashMap<>();
-            HashMap<String, Object> newChangesLog = new HashMap<>();
-
-            gradeAdditions.forEach(test -> {
-                testChanges.put(dbManager.formatTestDBName(test), test);
-                Change change = new Change(test, ChangeType.ADD, new Date());
-                newChangesLog.put(dbManager.formatChangeDBName(change), change);
-            });
-            gradeRemovals.forEach(test -> {
-                testChanges.put(dbManager.formatTestDBName(test), null);
-                Change change = new Change(test, ChangeType.REMOVE, new Date());
-                newChangesLog.put(dbManager.formatChangeDBName(change), change);
-            });
-
-            if(testChanges.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/tests/grade" + grade.getGradeNum(), testChanges);
-            if(newChangesLog.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
-
+            allAdditions.addAll(gradeAdditions);
+            allRemovals.addAll(gradeRemovals);
             System.out.println("Finished Grade #" + grade.getGradeNum());
         }
+        MongoManager mongoDBManager = new MongoManager();
 
-        dbManager.setValue("/last_update",new Date().getTime());
+        mongoDBManager.updateTests(allAdditions, allRemovals);
+        mongoDBManager.close();
     }
 }
