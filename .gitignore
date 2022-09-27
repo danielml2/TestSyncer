@@ -3,3 +3,7 @@ src/main/resources
 tokens
 data
 *.xlsx
+.gradle
+.build
+build
+gradle

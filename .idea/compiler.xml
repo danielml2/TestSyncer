@@ -7,8 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="AutoSchoolTestReader" />
-        <module name="TestSyncer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="1.10">
+      <module name="TestSyncer" target="10" />
+    </bytecodeTargetLevel>
   </component>
 </project>
