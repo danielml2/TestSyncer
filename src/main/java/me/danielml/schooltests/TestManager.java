@@ -20,7 +20,7 @@ public class TestManager {
 
     private final String[] filterWords = {"חשיפה","עבודה","הפקות","פעילות","טקס","הקאתון", "סיור", "יום","תגבור"};
 
-    public List<Test> getTests(File excelFile, Grade grade) throws IOException {
+    public List<Test> getTests(File excelFile, Grade grade, List<Integer> rowExclusions) throws IOException {
         List<Test> tests = new ArrayList<>();
 
         FileInputStream stream = new FileInputStream(excelFile);
@@ -36,6 +36,8 @@ public class TestManager {
                 {
                     mergedRowIndexes.add(mergedRegion.getFirstRow());
                     mergedRowIndexes.add(mergedRegion.getLastRow());
+                    if(rowExclusions.contains(mergedRegion.getFirstRow()) || rowExclusions.contains(mergedRegion.getLastRow()))
+                        return;
 
                     if(mergedRegion.getLastColumn() - mergedRegion.getFirstColumn() < grade.getMaxClassNum()-1)
                         return;
@@ -79,7 +81,7 @@ public class TestManager {
             Stream<Cell> cells = StreamSupport.stream(iterable.spliterator(), false);
 
             cells
-                  .filter(cell -> !mergedRowIndexes.contains(cell.getRowIndex()))
+                  .filter(cell -> !mergedRowIndexes.contains(cell.getRowIndex()) && !rowExclusions.contains(cell.getRowIndex()))
                   .filter(cell ->
                           cell.getColumnIndex() >= 2 && cell.getCellType() == CellType.STRING && row.getCell(0).getCellType() == CellType.NUMERIC)
                   .filter(cell ->
@@ -141,7 +143,7 @@ public class TestManager {
 
     public List<Test> getRemovals(List<Test> oldest, List<Test> newest) {
         return oldest.stream()
-                .filter(test -> !newest.contains(test))
+                .filter(test -> !newest.contains(test) && !test.isManuallyCreated())
                 .collect(Collectors.toList());
     }
 

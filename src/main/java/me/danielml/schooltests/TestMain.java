@@ -35,7 +35,9 @@ public class TestMain {
             System.out.println("Starting grade #" + grade.getGradeNum());
             List<Test> loadedTests = DEBUG ? json.fromJSON("tests_" + grade.getGradeNum()) : dbManager.loadTestsFromFirebase(grade.getGradeNum());
 
-            List<Test> fromExcel = testManager.getTests(file, grade);
+            List<Integer> exclusions = dbManager.getRowExclusions(grade);
+
+            List<Test> fromExcel = testManager.getTests(file, grade, exclusions);
 
             List<Test> gradeAdditions = testManager.getAdditions(loadedTests, fromExcel);
             List<Test> gradeRemovals = testManager.getRemovals(loadedTests, fromExcel);

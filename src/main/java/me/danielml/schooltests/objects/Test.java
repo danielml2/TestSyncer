@@ -22,6 +22,9 @@ public class Test {
     @JsonIgnore
     private String creationText;
 
+    @JsonIgnore
+    private boolean manuallyCreated;
+
     @JsonCreator
     public Test(@JsonProperty("subject") Subject subject, @JsonProperty("date") long dueDate, @JsonProperty("type") TestType type, @JsonProperty("gradeNum") int gradeNum, @JsonProperty("classNum") Integer[] classNums) {
         this.subject = subject;
@@ -29,6 +32,7 @@ public class Test {
         this.type = type;
         this.gradeNum = gradeNum;
         this.creationText = "NONE";
+        this.manuallyCreated = false;
         this.classNums = new ArrayList<>(Arrays.asList(classNums));
     }
 
@@ -75,6 +79,14 @@ public class Test {
 
     public String getCreationText() {
         return creationText;
+    }
+
+    public boolean isManuallyCreated() {
+        return manuallyCreated;
+    }
+
+    public void setManuallyCreated(boolean manuallyCreated) {
+        this.manuallyCreated = manuallyCreated;
     }
 
     @Override

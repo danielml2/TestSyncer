@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.*;
 import me.danielml.schooltests.objects.Change;
+import me.danielml.schooltests.objects.Grade;
 import me.danielml.schooltests.objects.Subject;
 import me.danielml.schooltests.objects.Test;
 import me.danielml.schooltests.objects.Test.TestType;
@@ -53,8 +54,11 @@ public class FirebaseManager extends GoogleManager{
                     Subject subject = Subject.from(testSnapshot.child("subject").getValue(String.class));
                     TestType type = TestType.from(testSnapshot.child("type").getValue(String.class));
                     long dueDate = testSnapshot.child("dueDate").getValue(Long.class);
+                    boolean manuallyCreated = testSnapshot.child("manual").getValue(Boolean.class) != null && testSnapshot.child("manual").getValue(Boolean.class);
 
-                    return new Test(subject,dueDate,type,gradeNum,classNums.toArray(new Integer[0]));
+                    Test test = new Test(subject,dueDate,type,gradeNum,classNums.toArray(new Integer[0]));
+                    test.setManuallyCreated(manuallyCreated);
+                    return test;
                 })
                 .collect(Collectors.toList());
     }
@@ -99,6 +103,12 @@ public class FirebaseManager extends GoogleManager{
         }
         return snapshot[0];
     }
+
+    public List<Integer> getRowExclusions(Grade grade) {
+       var snapshot = get("years/" + YEAR_ID + "/exclusions/grade" + grade.getGradeNum());
+       return snapshot.getValue() == null ? List.of(new Integer[]{}) : snapshot.getValue(new GenericTypeIndicator<ArrayList<Integer>>() {});
+    }
+
     public String formatTestDBName(Test test) {
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate());
     }
