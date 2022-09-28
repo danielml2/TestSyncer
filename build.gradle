@@ -5,6 +5,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 repositories {
@@ -32,6 +33,15 @@ version = '1.0-SNAPSHOT'
 description = 'AutoSchoolTestReader'
 java.sourceCompatibility = JavaVersion.VERSION_1_10
 compileJava.options.encoding = 'UTF-8'
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
+                'Main-Class': 'me.danielml.schooltests.TestMain'
+        )
+    }
+}
 
 publishing {
     publications {
