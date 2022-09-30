@@ -33,7 +33,7 @@ public class TestMain {
         Grade[] grades = new ObjectMapper().readValue(new File("data/grades.json"), new TypeReference<>() {});
         for(Grade grade : grades) {
             System.out.println("Starting grade #" + grade.getGradeNum());
-            List<Test> loadedTests = DEBUG ? json.fromJSON("tests_" + grade.getGradeNum()) : dbManager.loadTestsFromFirebase(grade.getGradeNum());
+            List<Test> loadedTests = dbManager.loadTestsFromFirebase(grade.getGradeNum());
 
             List<Integer> exclusions = dbManager.getRowExclusions(grade);
 
@@ -62,9 +62,9 @@ public class TestMain {
             });
 
             if(testChanges.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/tests/grade" + grade.getGradeNum(), testChanges);
+                dbManager.update("years/" + YEAR_ID + "/tests/grade" + grade.getGradeNum(), testChanges);
             if(newChangesLog.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
+                dbManager.update("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
 
             System.out.println("Finished Grade #" + grade.getGradeNum());
         }
