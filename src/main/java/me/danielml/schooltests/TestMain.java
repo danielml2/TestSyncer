@@ -47,7 +47,7 @@ public class TestMain {
             if(DEBUG)
                 json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
 
-//            calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
+            calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
 
             HashMap<String, Object> testChanges = new HashMap<>();
             HashMap<String, Object> newChangesLog = new HashMap<>();
