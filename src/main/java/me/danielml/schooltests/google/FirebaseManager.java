@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -102,6 +103,14 @@ public class FirebaseManager extends GoogleManager{
             e.printStackTrace();
         }
         return snapshot[0];
+    }
+
+    public void update(String ref, Map<String, Object> changes) {
+        DatabaseReference reference = db.getReference(ref);
+
+        reference.updateChildren(changes, (error, ref1) -> {
+            System.out.println("Updated data: " + error.getMessage());
+        });
     }
 
     public List<Integer> getRowExclusions(Grade grade) {

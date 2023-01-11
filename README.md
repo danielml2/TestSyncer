@@ -1,5 +1,5 @@
 ## TestSyncer
-[![wakatime](https://wakatime.com/badge/user/e02dbcc1-d0c7-4388-997f-0f0b3d73eaac/project/4611e0e6-63f8-4d1e-9dfe-b63c964bbed3.svg)](https://wakatime.com/badge/user/e02dbcc1-d0c7-4388-997f-0f0b3d73eaac/project/4611e0e6-63f8-4d1e-9dfe-b63c964bbed3)
+[![wakatime](https://wakatime.com/badge/user/e02dbcc1-d0c7-4388-997f-0f0b3d73eaac/project/41f63f42-5fa9-45b8-af57-ed0cd60e23f0.svg)](https://wakatime.com/badge/user/e02dbcc1-d0c7-4388-997f-0f0b3d73eaac/project/41f63f42-5fa9-45b8-af57-ed0cd60e23f0)
 ### What is this project?
 This, as the name of the repository says, is a java program which syncs up tests to a firebase database, using a test schedule which is an excel file downloaded from google drive, and converting that to test objects on the database.
 

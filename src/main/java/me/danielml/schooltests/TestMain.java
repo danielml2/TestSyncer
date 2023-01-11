@@ -66,9 +66,9 @@ public class TestMain {
             });
 
             if(testChanges.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/tests/grade" + grade.getGradeNum(), testChanges);
+                dbManager.update("years/" + YEAR_ID + "/tests/grade" + grade.getGradeNum(), testChanges);
             if(newChangesLog.size() > 0)
-                dbManager.setValue("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
+                dbManager.update("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
 
             System.out.println("(Additions: " + gradeAdditions.size() + ", Removals: " + gradeRemovals.size() + ")");
             System.out.println("Finished Grade #" + grade.getGradeNum());
