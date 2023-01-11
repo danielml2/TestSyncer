@@ -30,10 +30,12 @@ public class TestMain {
         FirebaseManager dbManager = new FirebaseManager();
         JSONManager json = new JSONManager();
 
+        int totalAdditions = 0;
+        int totalRemovals = 0;
         Grade[] grades = new ObjectMapper().readValue(new File("data/grades.json"), new TypeReference<>() {});
         for(Grade grade : grades) {
             System.out.println("Starting grade #" + grade.getGradeNum());
-            List<Test> loadedTests = DEBUG ? json.fromJSON("tests_" + grade.getGradeNum()) : dbManager.loadTestsFromFirebase(grade.getGradeNum());
+            List<Test> loadedTests = dbManager.loadTestsFromFirebase(grade.getGradeNum());
 
             List<Integer> exclusions = dbManager.getRowExclusions(grade);
 
@@ -45,7 +47,7 @@ public class TestMain {
             if(DEBUG)
                 json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
 
-            calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
+//            calendarManager.updateTestEvents(gradeAdditions, gradeRemovals, grade);
 
             HashMap<String, Object> testChanges = new HashMap<>();
             HashMap<String, Object> newChangesLog = new HashMap<>();
@@ -54,11 +56,13 @@ public class TestMain {
                 testChanges.put(dbManager.formatTestDBName(test), test);
                 Change change = new Change(test, ChangeType.ADD, new Date());
                 newChangesLog.put(dbManager.formatChangeDBName(change), change);
+                System.out.println("[NEW EVENT]: " + test);
             });
             gradeRemovals.forEach(test -> {
                 testChanges.put(dbManager.formatTestDBName(test), null);
                 Change change = new Change(test, ChangeType.REMOVE, new Date());
                 newChangesLog.put(dbManager.formatChangeDBName(change), change);
+                System.out.println("[REMOVED EVENT]: " + test);
             });
 
             if(testChanges.size() > 0)
@@ -66,9 +70,11 @@ public class TestMain {
             if(newChangesLog.size() > 0)
                 dbManager.setValue("years/" + YEAR_ID + "/changes/grade" + grade.getGradeNum(), newChangesLog);
 
+            System.out.println("(Additions: " + gradeAdditions.size() + ", Removals: " + gradeRemovals.size() + ")");
             System.out.println("Finished Grade #" + grade.getGradeNum());
         }
 
+        System.out.println("Total changes - (Additions: " + totalAdditions + ", Removals: " + totalRemovals + ")");
         dbManager.setValue("/last_update",new Date().getTime());
     }
 }

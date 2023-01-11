@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
 
 public class TestManager {
 
-    private final String[] filterWords = {"חשיפה","עבודה","הפקות","פעילות","טקס","הקאתון", "סיור", "יום","תגבור"};
+    private final String[] filterWords = {"חשיפה","עבודה","הפקות","פעילות","טקס","הקאתון", "סיור","תגבור"};
 
     public List<Test> getTests(File excelFile, Grade grade, List<Integer> rowExclusions) throws IOException {
         List<Test> tests = new ArrayList<>();
