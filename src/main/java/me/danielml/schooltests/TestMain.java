@@ -44,6 +44,9 @@ public class TestMain {
             List<Test> gradeAdditions = testManager.getAdditions(loadedTests, fromExcel);
             List<Test> gradeRemovals = testManager.getRemovals(loadedTests, fromExcel);
 
+            totalAdditions += gradeAdditions.size();
+            totalRemovals += gradeRemovals.size();
+
             if(DEBUG)
                 json.toJSON("tests_" + grade.getGradeNum(), fromExcel);
 
